@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Fitness Dashboard - Fitness Companion</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #00ffcc;
+      --secondary: #ffcc00;
+      --dark: #0f2027;
+      --light: #f5f7fa;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: var(--light);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: rgba(15, 32, 39, 0.9);
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0 20px;
+      padding: 8px 15px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .navbar a:hover {
+      color: var(--secondary);
+      transform: translateY(-3px);
+    }
+
+    .navbar a.active {
+      color: var(--primary);
+    }
+
+    .navbar a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .navbar a:hover::after {
+      width: 100%;
+    }
+
+    .container {
+      padding: 2rem 5%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .title-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+
+    .title-wrapper h1 {
+      font-size: 2.8rem;
+      color: var(--primary);
+      text-shadow: 0 2px 10px rgba(0, 255, 204, 0.3);
+      position: relative;
+    }
+
+    .title-wrapper h1::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 3px;
+      bottom: -10px;
+      left: 25%;
+      background: var(--secondary);
+      border-radius: 3px;
+    }
+
+    .dashboard-intro {
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      text-align: center;
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      border-color: rgba(0, 255, 204, 0.3);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .card h3 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card p {
+      margin: 0.5rem 0;
+      color: #ccc;
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-top: 1rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .quote-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 3rem auto;
+      max-width: 800px;
+      text-align: center;
+      border-left: 4px solid var(--secondary);
+      position: relative;
+    }
+
+    .quote-card p {
+      font-size: 1.2rem;
+      color: #ccc;
+      font-style: italic;
+    }
+
+    .progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: transparent;
+      z-index: 1000;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 0%;
+      transition: width 0.1s ease;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: var(--dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      .navbar a {
+        margin: 5px 0;
+      }
+
+      .title-wrapper h1 {
+        font-size: 2rem;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="navbar">
+    <a href="/" class="active"><i class="fas fa-home"></i> Home</a>
+    <a href="/meal-plan"><i class="fas fa-utensils"></i> Meal Plan</a>
+    <a href="/workout"><i class="fas fa-dumbbell"></i> Workout</a>
+    <a href="/gym-workout"><i class="fas fa-running"></i> Gym Workout</a>
+    <a href="/tips"><i class="fas fa-lightbulb"></i> Tips</a>
+  </div>
+
+  <div class="container">
+    <div class="title-wrapper animate__animated animate__fadeInDown">
+      <h1>DarshFit AI</h1>
+    </div>
+
+    <div class="dashboard-intro animate__animated animate__fadeIn">
+      <p>Your personalized assistant for fitness, nutrition, and health optimization. Get AI-powered recommendations tailored just for you.</p>
+    </div>
+
+    <!-- Health Tips Section -->
+    <h2 class="title-wrapper animate__animated animate__fadeIn"><i class="fas fa-bullhorn"></i> Daily Health Tips</h2>
+    <div class="card-grid animate__animated animate__fadeInUp">
+      <div class="card"><h3><i class="fas fa-drumstick-bite"></i> Macro Tip</h3><p>Eat 1.6–2.2g of protein per kg of body weight to support muscle maintenance and recovery.</p></div>
+      <div class="card"><h3><i class="fas fa-brain"></i> Mental Fitness</h3><p>10 mins of meditation daily can reduce anxiety and increase gym focus by 27%.</p></div>
+      <div class="card"><h3><i class="fas fa-tint"></i> Hydration Hack</h3><p>Drink a glass of water 30 minutes before meals to boost metabolism by up to 30%.</p></div>
+      <div class="card"><h3><i class="fas fa-bed"></i> Sleep Well</h3><p>7–9 hours of quality sleep helps with muscle recovery and hormonal balance.</p></div>
+      <div class="card"><h3><i class="fas fa-apple-alt"></i> Snack Smart</h3><p>Choose whole fruits, nuts, and seeds over processed snacks to maintain energy levels.</p></div>
+      <div class="card"><h3><i class="fas fa-shoe-prints"></i> Move Regularly</h3><p>Take a 5-minute walk every hour to keep your blood circulation and focus high.</p></div>
+    </div>
+
+    <!-- Featured Workouts -->
+    <h2 class="title-wrapper animate__animated animate__fadeIn"><i class="fas fa-fire"></i> Featured Workouts</h2>
+    <div class="card-grid animate__animated animate__fadeInUp">
+      <div class="card">
+        <img src="https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg" alt="Pushups">
+        <h3><i class="fas fa-fire"></i> Push-Up Circuit</h3>
+        <p>Perfect for upper body strength and chest gains. Includes 5 variations for all levels.</p>
+      </div>
+      <div class="card">
+        <img src="https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg" alt="Cardio">
+        <h3><i class="fas fa-bolt"></i> HIIT Cardio</h3>
+        <p>Burn fat fast in just 20 mins daily with this high-intensity interval training.</p>
+      </div>
+      <div class="card">
+        <img src="https://images.pexels.com/photos/1552106/pexels-photo-1552106.jpeg" alt="Leg Day">
+        <h3><i class="fas fa-mountain"></i> Leg Day Destroyer</h3>
+        <p>Focus on squats, lunges & calves for maximum lower body gains.</p>
+      </div>
+    </div>
+
+    <!-- Motivational Quote -->
+    <div class="quote-card animate__animated animate__fadeIn">
+      <p>"Discipline is choosing between what you want now and what you want most." — Abraham Lincoln</p>
+    </div>
+
+    <!-- Diet Plans -->
+    <h2 class="title-wrapper animate__animated animate__fadeIn"><i class="fas fa-utensils"></i> Popular Diet Plans</h2>
+    <div class="card-grid animate__animated animate__fadeInUp">
+      <div class="card"><h3><i class="fas fa-bacon"></i> Keto Diet</h3><p>High-fat, low-carb approach for efficient fat burning and steady energy levels throughout the day.</p></div>
+      <div class="card"><h3><i class="fas fa-leaf"></i> Vegan Power</h3><p>Plant-based meals designed to boost energy, reduce inflammation, and support recovery.</p></div>
+      <div class="card"><h3><i class="fas fa-dumbbell"></i> High-Protein</h3><p>Optimized for muscle gain, with recipes focused on recovery and post-workout repair.</p></div>
+      <div class="card"><h3><i class="fas fa-seedling"></i> Mediterranean</h3><p>Heart-healthy, anti-inflammatory diet rich in healthy fats, whole grains, and lean proteins.</p></div>
+      <div class="card"><h3><i class="fas fa-bread-slice"></i> Carb Cycling</h3><p>Alternate between high and low carb days to fuel workouts and enhance fat loss.</p></div>
+    </div>
+
+  
+
+  <!-- Floating Action Button -->
+  <div class="fab">
+    <i class="fas fa-plus"></i>
+  </div>
+
+  <script>
+    window.onscroll = function () {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("progressBar").style.width = scrolled + "%";
+    };
+
+    const fab = document.querySelector('.fab');
+    fab.addEventListener('click', () => {
+      alert('Quick action menu would appear here!');
+      fab.innerHTML = '<i class="fas fa-times"></i>';
+      setTimeout(() => {
+        fab.innerHTML = '<i class="fas fa-plus"></i>';
+      }, 1000);
+    });
+
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.querySelector('h3 i')?.classList.add('fa-bounce');
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.querySelector('h3 i')?.classList.remove('fa-bounce');
+      });
+    });
+  </script>
+</body>
+</html>

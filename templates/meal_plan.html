@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Diet Recommendation - Fitness Companion</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #00ffcc;
+      --secondary: #ffcc00;
+      --dark: #0f2027;
+      --light: #f5f7fa;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: var(--light);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: rgba(15, 32, 39, 0.9);
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0 20px;
+      padding: 8px 15px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .navbar a:hover {
+      color: var(--secondary);
+      transform: translateY(-3px);
+    }
+
+    .navbar a.active {
+      color: var(--primary);
+    }
+
+    .navbar a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .navbar a:hover::after {
+      width: 100%;
+    }
+
+    .container {
+      padding: 2rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .title-wrapper {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .title-wrapper h1 {
+      font-size: 2.8rem;
+      color: var(--primary);
+      text-shadow: 0 2px 10px rgba(0, 255, 204, 0.3);
+      position: relative;
+    }
+
+    .title-wrapper h1::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 3px;
+      bottom: -10px;
+      left: 25%;
+      background: var(--secondary);
+      border-radius: 3px;
+    }
+
+    .quote-form-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      margin: 4rem 0;
+    }
+
+    .quote-side {
+      width: 20%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-center {
+      flex: 1;
+      max-width: 750px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-container {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      padding: 3rem;
+      border-radius: 25px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s ease;
+    }
+
+    .form-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+      border-color: rgba(0, 255, 204, 0.3);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      color: var(--secondary);
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 1.5rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: rgba(0, 0, 0, 0.3);
+      color: var(--light);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    }
+
+    input[type='submit'] {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: var(--dark);
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      margin-top: 1rem;
+    }
+
+    input[type='submit']:hover {
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .quote {
+      text-align: center;
+      font-size: 1rem;
+      color: #aaa;
+      margin-top: 25px;
+      font-style: italic;
+    }
+
+    .quote-card {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 15px;
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+      position: relative;
+      cursor: pointer;
+      transform: scale(1);
+    }
+
+    .quote-card:hover {
+      transform: scale(1.05);
+      border-color: var(--primary);
+      box-shadow: 0 10px 20px rgba(0, 255, 204, 0.3);
+    }
+
+    .quote-card i {
+      color: var(--primary);
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .quote-card .author {
+      margin-top: 0.5rem;
+      color: var(--secondary);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .btn-home {
+      display: inline-block;
+      margin: 3rem auto;
+      padding: 15px 30px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-home:hover {
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: transparent;
+      z-index: 1000;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 0%;
+      transition: width 0.1s ease;
+    }
+
+    @media (max-width: 1024px) {
+      .quote-form-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .quote-side {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .quote-card {
+        width: 45%;
+        margin: 0.5rem;
+      }
+
+      .form-center {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<!-- (the same <head> section as before, unchanged) -->
+
+  <body>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    
+  
+    <div class="navbar">
+      <a href="/"><i class="fas fa-home"></i> Home</a>
+      <a href="/meal-plan" class="active"><i class="fas fa-utensils"></i> Meal Plan</a>
+      <a href="/gym-workout"><i class="fas fa-dumbbell"></i> Workouts</a>
+      <a href="/tips"><i class="fas fa-lightbulb"></i> Tips</a>
+    </div>
+  
+    <div class="container">
+      <div class="title-wrapper animate__animated animate__fadeInDown">
+        <h1> AI-Powered Nutrition Plan</h1>
+      </div>
+  
+      <div class="quote-form-wrapper animate__animated animate__fadeIn">
+        <!-- Left Quotes -->
+        <div class="quote-side">
+          <div class="quote-card">
+            <i class="fas fa-dumbbell"></i>
+            "No pain, no gain."
+            <div class="author">– Arnold Schwarzenegger</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-fire"></i>
+            "Discipline is choosing between what you want now and what you want most."
+            <div class="author">– Abraham Lincoln</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-bolt"></i>
+            "Push yourself, because no one else is going to do it for you."
+            <div class="author">– Unknown</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-mountain"></i>
+            "Success doesn’t come from what you do occasionally. It comes from what you do consistently."
+            <div class="author">– Marie Forleo</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-smile-beam"></i>
+            "Train your mind and your body will follow."
+            <div class="author">– Unknown</div>
+          </div>
+        </div>
+  
+        <!-- Center Form -->
+        <div class="form-center">
+          <div class="form-container">
+            <form action="/recommend" method="post">
+              <label for="height"><i class="fas fa-ruler-vertical"></i> Height (cm):</label>
+              <input type="number" step="0.1" name="height" required />
+  
+              <label for="weight"><i class="fas fa-weight"></i> Weight (kg):</label>
+              <input type="number" step="0.1" name="weight" required />
+  
+              <label for="age"><i class="fas fa-birthday-cake"></i> Age:</label>
+              <input type="number" name="age" required />
+  
+              <label for="gender"><i class="fas fa-venus-mars"></i> Gender:</label>
+              <select name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+  
+              <label for="activity"><i class="fas fa-running"></i> Activity Level:</label>
+              <select name="activity" required>
+                <option value="sedentary">Sedentary</option>
+                <option value="light">Light Activity</option>
+                <option value="moderate">Moderate Activity</option>
+                <option value="active">Very Active</option>
+              </select>
+  
+              <label for="goal"><i class="fas fa-bullseye"></i> Fitness Goal:</label>
+              <select name="goal" required>
+                <option value="lose">Lose Weight</option>
+                <option value="maintain">Maintain Weight</option>
+                <option value="gain">Gain Weight</option>
+              </select>
+  
+              <input type="submit" value="Generate Meal Plan" />
+            </form>
+            <div class="quote">"Your grind + our AI = transformation mode ON 🚀"</div>
+          </div>
+        </div>
+  
+        <!-- Right Quotes -->
+        <div class="quote-side">
+          <div class="quote-card">
+            <i class="fas fa-seedling"></i>
+            "Eat good, feel good, look great!"
+            <div class="author">– Unknown</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-heartbeat"></i>
+            "Your body hears everything your mind says."
+            <div class="author">– Naomi Judd</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-tint"></i>
+            "Hydration is the key to performance."
+            <div class="author">– Healthline</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-apple-alt"></i>
+            "One meal won’t make you healthy. One workout won’t make you fit. Consistency will."
+            <div class="author">– Unknown</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-brain"></i>
+            "Strong mind, strong body."
+            <div class="author">– Unknown</div>
+          </div>
+        </div>
+      </div>
+  
+      <div style="text-align: center;">
+        <a href="/" class="btn-home"><i class="fas fa-home"></i> Return Home</a>
+      </div>
+    </div>
+  
+    <script>
+      window.onscroll = function () {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById("progressBar").style.width = scrolled + "%";
+      };
+    </script>
+  </body>
+  
+</html>

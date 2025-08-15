@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Workout Plan - Fitness Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --secondary: #ffcc00;
+            --dark: #0f2027;
+            --light: #f5f7fa;
+        }
+
+        body {
+    font-family: 'Poppins', sans-serif;
+    background: #000; /* <- changed this */
+    color: var(--light);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+
+        .navbar {
+            background: rgba(15, 32, 39, 0.9);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 20px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar a:hover {
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .navbar a.active {
+            color: var(--primary);
+        }
+
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar a:hover::after {
+            width: 100%;
+        }
+
+        .container {
+            padding: 2rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .title-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .title-wrapper h1 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            text-shadow: 0 2px 10px rgba(0, 255, 204, 0.3);
+            position: relative;
+        }
+
+        .title-wrapper h1::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            bottom: -10px;
+            left: 25%;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 204, 0.3);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        select, input[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        select {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: var(--dark);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        input[type="submit"]:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .workout-plan {
+            margin: 4rem auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .workout-plan h2 {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .workout-plan h2 i {
+            margin-right: 15px;
+        }
+
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .exercise-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 204, 0.3);
+        }
+
+        .exercise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .exercise-card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .exercise-card p {
+            margin: 0.5rem 0;
+            color: #ccc;
+        }
+
+        .exercise-card p strong {
+            color: var(--secondary);
+        }
+
+        .exercise-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .exercise-card.active .exercise-content {
+            max-height: 500px;
+            margin-top: 1rem;
+        }
+
+        .exercise-video {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-home {
+            display: inline-block;
+            margin: 3rem auto;
+            padding: 15px 30px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-home:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: transparent;
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .navbar a {
+                margin: 5px 0;
+            }
+
+            .title-wrapper h1 {
+                font-size: 2rem;
+            }
+
+            .exercise-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="navbar">
+        <a href="/"><i class="fas fa-home"></i> Home</a>
+        <a href="/meal-plan"><i class="fas fa-utensils"></i> Meal Plan</a>
+        <a href="/gym-workout" class="active"><i class="fas fa-dumbbell"></i> Workouts</a>
+        <a href="/tips"><i class="fas fa-lightbulb"></i> Tips</a>
+    </div>
+
+    <div class="container">
+        <div class="title-wrapper animate__animated animate__fadeInDown">
+            <h1>AI-Powered Workout Planner</h1>
+        </div>
+
+        <div class="form-container animate__animated animate__fadeIn">
+            <form action="/workout" method="post">
+                <label for="goal"><i class="fas fa-bullseye"></i> Choose Your Goal:</label>
+                <select name="goal" id="goal" required>
+                    <option value="fat_loss">Fat Loss</option>
+                    <option value="muscle_gain">Muscle Gain</option>
+                    <option value="endurance">Endurance</option>
+                    <option value="strength">Strength Training</option>
+                    <option value="toning">Body Toning</option>
+                </select>
+                <input type="submit" value="Generate Workout Plan">
+            </form>
+        </div>
+
+        {% if workouts %}
+        <div class="workout-plan animate__animated animate__fadeInUp">
+            <h2><i class="fas fa-clipboard-list"></i> Your Personalized Workout Plan</h2>
+            <div class="exercise-grid">
+                {% for w in workouts %}
+                <div class="exercise-card" onclick="this.classList.toggle('active')">
+                    <h3>{{ w.name }}</h3>
+                    <p><strong>Target:</strong> {{ w.target }}</p>
+                    <p><strong>Duration:</strong> {{ w.duration }} mins</p>
+                    <p><strong>Sets/Reps:</strong> {{ w.sets_reps }}</p>
+                    <div class="exercise-content">
+                        {% if w.video_url %}
+                        <iframe class="exercise-video" src="{{ w.video_url }}" title="{{ w.name }} Tutorial" frameborder="0" allowfullscreen></iframe>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center;">
+            <a href="/" class="btn-home"><i class="fas fa-home"></i> Return Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Scroll progress indicator
+        window.onscroll = function () {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gym Workout Plan - Fitness Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --secondary: #ffcc00;
+            --dark: #0f2027;
+            --light: #f5f7fa;
+        }
+        
+        body {
+    font-family: 'Poppins', sans-serif;
+    background: #000; /* <- changed this */
+    color: var(--light);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+        
+        .navbar {
+            background: rgba(15, 32, 39, 0.9);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 20px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .navbar a:hover {
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .navbar a.active {
+            color: var(--primary);
+        }
+        
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .navbar a:hover::after {
+            width: 100%;
+        }
+        
+        .container {
+    padding: 2rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center; /* Add this */
+}
+
+h1 {
+    margin-bottom: 3rem;
+    font-size: 3rem;
+    color: var(--primary);
+    text-shadow: 0 2px 10px rgba(0, 255, 204, 0.3);
+    position: relative;
+    display: inline-block;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 3px;
+    bottom: -10px;
+    left: 25%;
+    background: var(--secondary);
+    border-radius: 3px;
+}
+
+        
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto 4rem auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+        
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 204, 0.3);
+        }
+        
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+        
+        select, button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        select {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: var(--dark);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+        
+        button:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .workout-plan {
+            margin: 4rem auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .workout-plan h2 {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .workout-plan h2 i {
+            margin-right: 15px;
+        }
+        
+        .workout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .workout-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .workout-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 204, 0.3);
+        }
+        
+        .workout-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .workout-card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .workout-card p {
+            margin: 0.5rem 0;
+            color: #ccc;
+        }
+        
+        .workout-card p strong {
+            color: var(--secondary);
+        }
+        
+        .workout-gif {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            margin-top: 1rem;
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-home {
+            display: inline-block;
+            margin: 3rem auto;
+            padding: 15px 30px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-home:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: transparent;
+            z-index: 1000;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        
+        .day-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary);
+            border-right: 5px solid var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .navbar a {
+                margin: 5px 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .workout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+
+    
+    <div class="navbar">
+        <a href="/"><i class="fas fa-home"></i> Home</a>
+        <a href="/meal-plan"><i class="fas fa-utensils"></i> Meal Plan</a>
+        <a href="/gym-workout" class="active"><i class="fas fa-dumbbell"></i> Workouts</a>
+        <a href="/tips"><i class="fas fa-lightbulb"></i> Tips</a>
+    </div>
+
+    <div class="container">
+        <h1 class="animate__animated animate__fadeInDown"> Gym Workout Plan Generator</h1>
+
+        <div class="form-container animate__animated animate__fadeIn">
+            <form method="POST">
+                <label for="body_type"><i class="fas fa-user-tag"></i> Body Type:</label>
+                <select name="body_type" id="body_type" required>
+                    <option value="ectomorph">Ectomorph (Lean)</option>
+                    <option value="mesomorph">Mesomorph (Athletic)</option>
+                    <option value="endomorph">Endomorph (Stocky)</option>
+                </select>
+
+                <label for="weight_category"><i class="fas fa-weight"></i> Weight Category:</label>
+                <select name="weight_category" id="weight_category" required>
+                    <option value="underweight">Underweight</option>
+                    <option value="normal">Normal Weight</option>
+                    <option value="overweight">Overweight</option>
+                </select>
+
+                <label for="day"><i class="fas fa-calendar-day"></i> Training Day:</label>
+                <select name="day" id="day" required>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                    <option value="sunday">Sunday</option>
+                </select>
+
+                <button type="submit"><i class="fas fa-bolt"></i> Generate Plan</button>
+            </form>
+        </div>
+
+        {% if workouts %}
+        <div class="workout-plan animate__animated animate__fadeInUp">
+            <div class="day-header">
+                <i class="fas fa-calendar-check"></i> {{ day|capitalize }} Plan for 
+                <span style="color: var(--primary)">{{ body_type|capitalize }}</span> 
+                ({{ weight_category|capitalize }})
+            </div>
+            
+            <div class="workout-grid">
+                {% for w in workouts %}
+                    <div class="workout-card">
+                        <h3>{{ w.name }}</h3>
+                        <p><strong>Sets:</strong> {{ w.sets }}</p>
+                        <p><strong>Reps:</strong> {{ w.reps }}</p>
+                        {% if w.gifUrl %}
+                            <img src="{{ w.gifUrl }}" class="workout-gif" alt="{{ w.name }} demonstration">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center;">
+            <a href="/" class="btn-home"><i class="fas fa-home"></i> Return Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Scroll progress indicator
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        };
+
+        // Animate elements when they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__fadeInUp');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.form-container, .workout-plan').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

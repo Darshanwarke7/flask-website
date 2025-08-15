@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Recipes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0d0d0d;
+            color: #ffffff;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            box-shadow: 0 0 20px rgba(0, 255, 150, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            color: #00ff99;
+            margin-bottom: 30px;
+        }
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .recipe-card {
+            background: #262626;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .recipe-content {
+            padding: 20px;
+        }
+        .recipe-title {
+            font-size: 1.3rem;
+            color: #00ff99;
+            margin: 0 0 10px 0;
+        }
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .nutrition-info {
+            background: #333;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .nutrition-info p {
+            margin: 5px 0;
+            color: #ddd;
+        }
+        .view-recipe {
+            display: block;
+            text-align: center;
+            background: #00ff99;
+            color: #000;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .view-recipe:hover {
+            background: #00cc77;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        .page-btn {
+            background: #333;
+            color: #00ff99;
+            border: 1px solid #00ff99;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .page-btn:hover {
+            background: #00ff99;
+            color: #000;
+        }
+        .page-btn.active {
+            background: #00ff99;
+            color: #000;
+            font-weight: bold;
+        }
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #ff5555;
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2rem;
+        }
+        .try-again {
+            background: #00ff99;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .try-again:hover {
+            background: #00cc77;
+        }
+        @media (max-width: 768px) {
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gym-Friendly Recipes</h1>
+        <div id="recipes">
+            {% if recipes %}
+                <div class="recipes-grid">
+                    {% for recipe in recipes %}
+                        <div class="recipe-card">
+                            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image"
+                                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                            <div class="recipe-content">
+                                <h2 class="recipe-title">{{ recipe.title }}</h2>
+                                <div class="recipe-meta">
+                                    <span>Servings: {{ recipe.servings }}</span>
+                                    <span>Ready in: {{ recipe.readyInMinutes }} mins</span>
+                                </div>
+                                <div class="nutrition-info">
+                                    <p>Calories: {{ recipe.nutrition.get('calories', 'N/A') }}</p>
+                                    <p>Protein: {{ recipe.nutrition.get('protein', 'N/A') }}g</p>
+                                    <p>Carbs: {{ recipe.nutrition.get('carbs', 'N/A') }}g</p>
+                                    <p>Fat: {{ recipe.nutrition.get('fat', 'N/A') }}g</p>
+                                </div>
+                                <a href="{{ recipe.url }}" class="view-recipe" target="_blank">View Recipe</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if total_pages > 1 %}
+                <div class="pagination">
+                    {% if current_page > 1 %}
+                        <button class="page-btn" onclick="window.location.href='?page={{ current_page-1 }}'">Previous</button>
+                    {% else %}
+                        <button class="page-btn disabled">Previous</button>
+                    {% endif %}
+
+                    {% for page_num in range(1, total_pages+1) %}
+                        {% if page_num == current_page %}
+                            <button class="page-btn active">{{ page_num }}</button>
+                        {% else %}
+                            <button class="page-btn" onclick="window.location.href='?page={{ page_num }}'">{{ page_num }}</button>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if current_page < total_pages %}
+                        <button class="page-btn" onclick="window.location.href='?page={{ current_page+1 }}'">Next</button>
+                    {% else %}
+                        <button class="page-btn disabled">Next</button>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="error-message">
+                    <p>Failed to load recipes. Please try again later.</p>
+                    <button class="try-again" onclick="window.location.reload()">Try Again</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Fallback AJAX request if server-side rendering fails
+        document.addEventListener('DOMContentLoaded', function() {
+            const recipesDiv = document.getElementById('recipes');
+            
+            if (recipesDiv.innerHTML.includes('Failed to load')) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const page = urlParams.get('page') || 1;
+                
+                fetch(`/get_recipes?page=${page}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.recipes && data.recipes.length > 0) {
+                            renderRecipes(data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching recipes:', error);
+                    });
+            }
+
+            function renderRecipes(data) {
+                let html = '<div class="recipes-grid">';
+                
+                data.recipes.forEach(recipe => {
+                    html += `
+                        <div class="recipe-card">
+                            <img src="${recipe.image || 'https://via.placeholder.com/300x200?text=No+Image'}" 
+                                 alt="${recipe.title || ''}" class="recipe-image">
+                            <div class="recipe-content">
+                                <h2 class="recipe-title">${recipe.title || 'No title'}</h2>
+                                <div class="recipe-meta">
+                                    <span>Servings: ${recipe.servings || 'N/A'}</span>
+                                    <span>Ready in: ${recipe.readyInMinutes || 'N/A'} mins</span>
+                                </div>
+                                <div class="nutrition-info">
+                                    <p>Calories: ${recipe.nutrition?.calories || 'N/A'}</p>
+                                    <p>Protein: ${recipe.nutrition?.protein || 'N/A'}g</p>
+                                    <p>Carbs: ${recipe.nutrition?.carbs || 'N/A'}g</p>
+                                    <p>Fat: ${recipe.nutrition?.fat || 'N/A'}g</p>
+                                </div>
+                                <a href="${recipe.url || '#'}" class="view-recipe" target="_blank">View Recipe</a>
+                            </div>
+                        </div>`;
+                });
+                
+                html += '</div>';
+                
+                if (data.total_pages > 1) {
+                    html += `<div class="pagination">`;
+                    
+                    // Previous button
+                    if (data.current_page > 1) {
+                        html += `<button class="page-btn" onclick="window.location.href='?page=${data.current_page-1}'">Previous</button>`;
+                    } else {
+                        html += `<button class="page-btn disabled">Previous</button>`;
+                    }
+                    
+                    // Page numbers
+                    for (let i = 1; i <= data.total_pages; i++) {
+                        if (i === data.current_page) {
+                            html += `<button class="page-btn active">${i}</button>`;
+                        } else {
+                            html += `<button class="page-btn" onclick="window.location.href='?page=${i}'">${i}</button>`;
+                        }
+                    }
+                    
+                    // Next button
+                    if (data.current_page < data.total_pages) {
+                        html += `<button class="page-btn" onclick="window.location.href='?page=${data.current_page+1}'">Next</button>`;
+                    } else {
+                        html += `<button class="page-btn disabled">Next</button>`;
+                    }
+                    
+                    html += `</div>`;
+                }
+                
+                recipesDiv.innerHTML = html;
+            }
+        });
+    </script>
+</body>
+</html>
